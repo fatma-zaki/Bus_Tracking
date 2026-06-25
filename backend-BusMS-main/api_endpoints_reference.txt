@@ -1,0 +1,329 @@
+============================
+دليل REST API لنظام إدارة الحافلات المدرسية
+============================
+
+النوع: RESTful API
+اللغة: Node.js (Express)
+المصادقة: JWT Token
+الاستجابة: JSON
+
+----------------------------
+1. المستخدمون (Users)
+----------------------------
+
+تسجيل الدخول:
+POST /api/users/login
+Body:
+{
+  "email": "user@email.com",
+  "password": "123456"
+}
+Response:
+{
+  "token": "JWT_TOKEN",
+  "user": {
+    "_id": "id",
+    "name": "اسم المستخدم",
+    "role": "admin | manager | driver | parent",
+    "email": "user@email.com"
+  }
+}
+
+جلب كل المستخدمين:
+GET /api/users
+Headers: Authorization: Bearer TOKEN
+Response:
+[
+  {
+    "_id": "id",
+    "name": "اسم",
+    "email": "email",
+    "role": "admin | manager | driver | parent"
+  },
+  ...
+]
+
+----------------------------
+2. الحافلات (Buses)
+----------------------------
+
+جلب كل الحافلات:
+GET /api/buses
+Response:
+[
+  {
+    "_id": "id",
+    "BusNumber": "123",
+    "capacity": 40,
+    "status": "active | inactive",
+    "assigned_driver_id": "driverId",
+    "route_id": "routeId"
+  },
+  ...
+]
+
+----------------------------
+3. الطرق (Routes)
+----------------------------
+
+جلب كل الطرق:
+GET /api/routes
+Response:
+[
+  {
+    "_id": "id",
+    "name": "Route 1",
+    "start_point": { "name": "School", "lat": 30.1, "long": 31.2 },
+    "end_point": { "name": "Home", "lat": 30.3, "long": 31.4 },
+    "stops": [
+      { "name": "Stop 1", "lat": 30.11, "long": 31.21 },
+      { "name": "Stop 2", "lat": 30.12, "long": 31.22 }
+    ],
+    "estimated_time": "45 min",
+    "createdAt": "2024-06-08T12:00:00.000Z"
+  },
+  ...
+]
+
+----------------------------
+4. الحضور (Attendance)
+----------------------------
+
+تسجيل حضور طالب:
+POST /api/attendances
+Body:
+{
+  "student_id": "id",
+  "route_id": "id",
+  "status": "present | absent",
+  "date": "2024-06-08"
+}
+Response:
+{ "message": "Attendance recorded" }
+
+جلب إحصائيات الحضور:
+GET /api/attendances/stats
+Response:
+{
+  "total": 100,
+  "present": 90,
+  "absent": 10
+}
+
+----------------------------
+5. التتبع (Tracking)
+----------------------------
+
+تحديث موقع الحافلة:
+POST /api/tracking
+Body:
+{
+  "bus_id": "id",
+  "lat": 30.123,
+  "long": 31.456,
+  "timestamp": "2024-06-08T12:00:00.000Z"
+}
+Response:
+{ "message": "Location updated" }
+
+جلب آخر موقع لحافلة:
+GET /api/tracking/bus/:busId
+Response:
+{
+  "bus_id": "id",
+  "lat": 30.123,
+  "long": 31.456,
+  "timestamp": "2024-06-08T12:00:00.000Z"
+}
+
+----------------------------
+6. الإشعارات (Notifications)
+----------------------------
+
+جلب الإشعارات:
+GET /api/notifications
+Response:
+[
+  {
+    "_id": "id",
+    "title": "تنبيه",
+    "body": "تم وصول الحافلة",
+    "createdAt": "2024-06-08T12:00:00.000Z"
+  },
+  ...
+]
+
+----------------------------
+7. الحجز (Bookings)
+----------------------------
+
+إنشاء حجز جديد:
+POST /api/bookings/create
+Headers: Authorization: Bearer TOKEN
+Body:
+{
+  "studentId": "student_id",
+  "busId": "bus_id",
+  "routeId": "route_id",
+  "date": "2024-06-08T00:00:00.000Z",
+  "pickupLocation": {
+    "name": "Home",
+    "lat": 30.123,
+    "long": 31.456
+  },
+  "dropoffLocation": {
+    "name": "School",
+    "lat": 30.234,
+    "long": 31.567
+  },
+  "notes": "Optional notes"
+}
+Response:
+{
+  "_id": "booking_id",
+  "studentId": { "_id": "student_id", "firstName": "Name", "lastName": "Last" },
+  "busId": { "_id": "bus_id", "BusNumber": "BUS-001", "capacity": 30 },
+  "routeId": { "_id": "route_id", "name": "Route 1" },
+  "status": "pending",
+  "date": "2024-06-08T00:00:00.000Z",
+  "pickupLocation": { "name": "Home", "lat": 30.123, "long": 31.456 },
+  "dropoffLocation": { "name": "School", "lat": 30.234, "long": 31.567 },
+  "notes": "Optional notes"
+}
+
+جلب حجوزات الوالد:
+GET /api/bookings/parent
+Headers: Authorization: Bearer TOKEN
+Query Parameters: status (optional), date (optional)
+Response:
+[
+  {
+    "_id": "booking_id",
+    "studentId": { "_id": "student_id", "firstName": "Name", "lastName": "Last" },
+    "busId": { "_id": "bus_id", "BusNumber": "BUS-001", "capacity": 30 },
+    "routeId": { "_id": "route_id", "name": "Route 1" },
+    "status": "pending | confirmed | cancelled | completed",
+    "date": "2024-06-08T00:00:00.000Z",
+    "pickupLocation": { "name": "Home", "lat": 30.123, "long": 31.456 },
+    "dropoffLocation": { "name": "School", "lat": 30.234, "long": 31.567 }
+  },
+  ...
+]
+
+إلغاء الحجز:
+DELETE /api/bookings/cancel/:bookingId
+Headers: Authorization: Bearer TOKEN
+Response:
+{ "message": "Booking cancelled successfully" }
+
+جلب الحافلات المتاحة:
+GET /api/bookings/available-buses
+Headers: Authorization: Bearer TOKEN
+Query Parameters: routeId, date
+Response:
+[
+  {
+    "_id": "bus_id",
+    "BusNumber": "BUS-001",
+    "capacity": 30,
+    "status": "active",
+    "assigned_driver_id": { "_id": "driver_id", "firstName": "Driver", "lastName": "Name" },
+    "availableSeats": 15,
+    "isAvailable": true
+  },
+  ...
+]
+
+----------------------------
+8. مواقع الحافلات (Bus Locations)
+----------------------------
+
+تحديث موقع الحافلة (للسائق):
+POST /api/bus-locations/update
+Headers: Authorization: Bearer TOKEN
+Body:
+{
+  "busId": "bus_id",
+  "routeId": "route_id",
+  "currentLocation": {
+    "latitude": 30.123,
+    "longitude": 31.456
+  },
+  "speed": 45,
+  "heading": 90,
+  "status": "active | stopped | maintenance | offline",
+  "currentStop": {
+    "name": "Current Stop",
+    "lat": 30.123,
+    "long": 31.456
+  },
+  "nextStop": {
+    "name": "Next Stop",
+    "lat": 30.234,
+    "long": 31.567
+  },
+  "estimatedArrival": "2024-06-08T12:30:00.000Z"
+}
+Response:
+{
+  "_id": "location_id",
+  "busId": { "_id": "bus_id", "BusNumber": "BUS-001", "capacity": 30 },
+  "driverId": { "_id": "driver_id", "firstName": "Driver", "lastName": "Name" },
+  "routeId": { "_id": "route_id", "name": "Route 1" },
+  "currentLocation": { "latitude": 30.123, "longitude": 31.456 },
+  "speed": 45,
+  "heading": 90,
+  "status": "active",
+  "lastUpdate": "2024-06-08T12:00:00.000Z"
+}
+
+جلب مواقع الحافلات النشطة:
+GET /api/bus-locations/active
+Response:
+[
+  {
+    "_id": "location_id",
+    "busId": { "_id": "bus_id", "BusNumber": "BUS-001", "capacity": 30 },
+    "driverId": { "_id": "driver_id", "firstName": "Driver", "lastName": "Name" },
+    "routeId": { "_id": "route_id", "name": "Route 1" },
+    "currentLocation": { "latitude": 30.123, "longitude": 31.456 },
+    "speed": 45,
+    "heading": 90,
+    "status": "active",
+    "currentStop": { "name": "Current Stop", "lat": 30.123, "long": 31.456 },
+    "nextStop": { "name": "Next Stop", "lat": 30.234, "long": 31.567 },
+    "estimatedArrival": "2024-06-08T12:30:00.000Z",
+    "lastUpdate": "2024-06-08T12:00:00.000Z"
+  },
+  ...
+]
+
+جلب موقع حافلة محددة:
+GET /api/bus-locations/bus/:busId
+Response:
+{
+  "_id": "location_id",
+  "busId": { "_id": "bus_id", "BusNumber": "BUS-001", "capacity": 30 },
+  "driverId": { "_id": "driver_id", "firstName": "Driver", "lastName": "Name" },
+  "routeId": { "_id": "route_id", "name": "Route 1", "stops": [...] },
+  "currentLocation": { "latitude": 30.123, "longitude": 31.456 },
+  "speed": 45,
+  "heading": 90,
+  "status": "active",
+  "currentStop": { "name": "Current Stop", "lat": 30.123, "long": 31.456 },
+  "nextStop": { "name": "Next Stop", "lat": 30.234, "long": 31.567 },
+  "estimatedArrival": "2024-06-08T12:30:00.000Z",
+  "lastUpdate": "2024-06-08T12:00:00.000Z"
+}
+
+----------------------------
+ملخص المعطيات الأساسية للواجهات
+----------------------------
+- المستخدم: _id, firstName, lastName, role, email, parentId, children[]
+- الحافلة: _id, BusNumber, capacity, status, assigned_driver_id, route_id, availableSeats, isAvailable
+- الطريق: _id, name, start_point, end_point, stops[], estimated_time
+- الحضور: student_id, route_id, status, date
+- التتبع: bus_id, lat, long, timestamp
+- الإشعار: _id, title, body, createdAt 
+- الحجز: _id, studentId, parentId, busId, routeId, date, status, pickupLocation, dropoffLocation, notes
+- موقع الحافلة: _id, busId, driverId, routeId, currentLocation, speed, heading, status, currentStop, nextStop, estimatedArrival, lastUpdate 
