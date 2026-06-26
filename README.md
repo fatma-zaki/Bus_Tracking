@@ -165,20 +165,21 @@ All endpoints are protected by JWT authentication and role-based authorization m
 > - Booking Flow
 > - Driver Dashboard
 
-## Deployment (Render)
+## Deployment (Vercel — Free)
 
-This project is configured for single-service deployment on [Render](https://render.com). The backend serves the frontend build in production.
+The entire project (frontend + backend API) is deployed on [Vercel](https://vercel.com) as a single service. The backend runs as serverless functions.
 
-1. Push the repo to GitHub
-2. Go to [Render Dashboard](https://dashboard.render.com) and click **New > Web Service**
-3. Connect your GitHub repository
-4. Render will auto-detect the `render.yaml` blueprint, or configure manually:
-   - **Build command**: `npm run render-build`
-   - **Start command**: `npm start`
-5. Add environment variables in the Render dashboard (see `backend-BusMS-main/.env.example`)
-6. Deploy
+1. Go to [vercel.com](https://vercel.com) and sign in with GitHub
+2. Import the **Bus_Tracking** repository
+3. Add environment variables in the Vercel dashboard:
+   - `MONGO_URI` — your MongoDB Atlas connection string
+   - `JWT_SECRET` — your JWT secret key
+   - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+   - `EMAIL_USER`, `EMAIL_PASSWORD`
+   - (Optional) `OpenAI_API_KEY`
+4. Deploy
 
-The `render.yaml` file in the repo root provides a one-click blueprint setup.
+> **Note:** Real-time bus tracking via Socket.IO is available in local development but not in the Vercel deployment (serverless functions don't support WebSockets). All other features (dashboards, booking, maps, auth, CRUD) work fully.
 
 ## License
 

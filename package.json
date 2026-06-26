@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "render-build": "npm install && npm run build && cd backend-BusMS-main && npm install",
-    "start": "cd backend-BusMS-main && node server.js",
+    "vercel-build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },

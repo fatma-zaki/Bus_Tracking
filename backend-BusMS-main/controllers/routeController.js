@@ -1,5 +1,6 @@
 const Route = require('../models/Route');
-const { io } = require('../server');
+let io;
+try { io = require('../server').io; } catch (e) { io = null; }
 
 // createRoute
 exports.createRoute = async (req, res) => {

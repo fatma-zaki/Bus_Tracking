@@ -23,9 +23,8 @@ const createTracking = async (req, res) => {
       timestamp: timestamp || new Date()
     });
     await tracking.save();
-    // Get io instance
     const io = req.app.get('io');
-    // Emit real-time update to all clients tracking this bus
+    if (io) {
     io.to(`bus-${bus_id}`).emit('bus-location-update', {
       busId: bus_id,
       busNumber: bus.BusNumber,
@@ -38,7 +37,6 @@ const createTracking = async (req, res) => {
         timestamp: tracking.timestamp
       }
     });
-    // Emit to route tracking if bus has a route
     if (bus.route_id) {
       io.to(`route-${bus.route_id}`).emit('route-bus-update', {
         routeId: bus.route_id,
@@ -53,6 +51,7 @@ const createTracking = async (req, res) => {
           timestamp: tracking.timestamp
         }
       });
+    }
     }
     res.status(201).json({ 
       message: "Tracking location saved successfully", 

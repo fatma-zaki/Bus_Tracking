@@ -3,7 +3,8 @@
 const mongoose = require('mongoose');
 const Notification = require('../models/Notification');
 const { sendPushNotification } = require('../utils/pushNotifications');
-const { io } = require('../server');
+let io;
+try { io = require('../server').io; } catch (e) { io = null; }
 
 // Attempt to import User model if it exists
 let User;

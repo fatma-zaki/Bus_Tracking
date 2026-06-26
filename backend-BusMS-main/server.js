@@ -1,5 +1,4 @@
 const express = require("express");
-const path = require("path");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cors = require("cors");
@@ -69,14 +68,6 @@ app.use('/api/uploads', uploadsRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Server is running' });
 });
-
-// Serve frontend in production
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../dist')));
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../dist/index.html'));
-  });
-}
 
 const PORT = process.env.PORT || 5000;
 
