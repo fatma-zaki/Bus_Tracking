@@ -171,6 +171,31 @@ const AdminLogin = () => {
               </form>
             </div>
 
+            {/* Demo Credentials */}
+            <div className="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-5">
+              <div className="flex items-center mb-3">
+                <i className="fas fa-key text-amber-500 mr-2"></i>
+                <h3 className="text-sm font-bold text-amber-800">Demo Credentials</h3>
+                <span className="ml-auto text-xs bg-amber-200 text-amber-800 px-2 py-0.5 rounded-full font-medium">Portfolio Demo</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFormData({ email: "admin@bustrack.demo", password: "Demo@1234" })}
+                className="w-full flex items-center justify-between px-4 py-3 bg-white border border-amber-200 rounded-lg hover:bg-amber-100 transition-colors duration-200 group"
+              >
+                <div className="flex items-center">
+                  <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <i className="fas fa-shield-alt text-blue-600 text-sm"></i>
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-gray-800">Admin Account</p>
+                    <p className="text-xs text-gray-500">admin@bustrack.demo / Demo@1234</p>
+                  </div>
+                </div>
+                <span className="text-xs text-amber-600 font-medium group-hover:text-amber-800">Click to fill <i className="fas fa-arrow-right ml-1"></i></span>
+              </button>
+            </div>
+
             {/* Admin Features */}
             <div className="mt-8 bg-brand-beige rounded-lg p-6">
               <h3 className="text-lg font-semibold text-brand-dark-blue mb-4">Admin Features</h3>
