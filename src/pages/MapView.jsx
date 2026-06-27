@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Link, useLocation } from "react-router-dom"
 import LiveTrackingMap from "../components/LiveTrackingMap"
 import TrackingTestPanel from "../components/TrackingTestPanel"
@@ -62,11 +62,13 @@ const MapView = () => {
 
   // منطق اختيار الباص للـ parent/student
   const isParentOrStudent = user?.role === "parent" || user?.role === "student"
-  const busesForSelect = buses.map(bus => ({ id: bus._id || bus.id, name: bus.BusNumber || bus.number }))
+  const busesForSelect = useMemo(() =>
+    buses.map(bus => ({ id: bus._id || bus.id, name: bus.BusNumber || bus.number })),
+    [buses]
+  );
   const hasSingleBus = isParentOrStudent && busesForSelect.length === 1
   const hasMultipleBuses = isParentOrStudent && busesForSelect.length > 1
 
-  // إذا parent/student وباص واحد فقط: اختاره تلقائيًا
   useEffect(() => {
     if (hasSingleBus) {
       setSelectedBus(busesForSelect[0].id)
