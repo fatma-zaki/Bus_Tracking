@@ -34,7 +34,7 @@ const ParentProfile = () => {
   const fetchCurrentUser = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:5000/api/users/me", {
+      const res = await axios.get("/api/users/me", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const userData = res.data.data?.user || res.data.user;
@@ -60,13 +60,13 @@ const ParentProfile = () => {
     try {
       // Fetch children
       const token = localStorage.getItem("token");
-      const childrenRes = await axios.get("http://localhost:5000/api/users/me/children", {
+      const childrenRes = await axios.get("/api/users/me/children", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const childrenData = childrenRes.data;
       setChildren(childrenData.data?.children || childrenData.children || []);
       // Fetch attendance for all children
-      const attendanceRes = await axios.get("http://localhost:5000/api/attendances/parent", {
+      const attendanceRes = await axios.get("/api/attendances/parent", {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAttendanceHistory(attendanceRes.data || []);
@@ -91,7 +91,7 @@ const ParentProfile = () => {
         boardingTime: status === "present" ? new Date().toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit" }) : "",
         deboardingTime: ""
       };
-      await axios.post("http://localhost:5000/api/attendances", attendanceData, {
+      await axios.post("/api/attendances", attendanceData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
@@ -169,7 +169,7 @@ const ParentProfile = () => {
         updateData.newPassword = editForm.newPassword;
       }
       
-      await axios.patch("http://localhost:5000/api/users/me", updateData, {
+      await axios.patch("/api/users/me", updateData, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
