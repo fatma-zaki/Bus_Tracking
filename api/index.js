@@ -43,6 +43,15 @@ try {
     res.json({ status: 'OK', message: 'Server is running' });
   });
 
+  app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({
+      error: 'Request failed',
+      message: err.message,
+      stack: err.stack
+    });
+  });
+
 } catch (error) {
   const express = require("express");
   app = express();
