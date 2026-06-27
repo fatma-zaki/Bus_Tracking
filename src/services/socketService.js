@@ -13,7 +13,13 @@ class SocketService {
       return;
     }
 
-    const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.PROD ? window.location.origin : 'http://localhost:5000');
+
+    if (import.meta.env.PROD && !import.meta.env.VITE_SOCKET_URL) {
+      console.log('WebSocket disabled in production (serverless). Using polling for updates.');
+      return;
+    }
+
     this.socket = io(socketUrl, {
       transports: ['websocket', 'polling'],
       autoConnect: true,

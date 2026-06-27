@@ -969,8 +969,6 @@ const AdvancedLeafletMap = ({
   const renderBusMarkers = () => {
     if (!Array.isArray(propBuses)) return null;
     return propBuses.map((bus, idx) => {
-      console.log('bus:', bus);
-      console.log('bus.currentLocation:', bus.currentLocation);
       const lat = bus.currentLocation?.lat ?? bus.currentLocation?.latitude ?? bus.lat;
       const lng = bus.currentLocation?.lng ?? bus.currentLocation?.long ?? bus.currentLocation?.longitude ?? bus.lng ?? bus.long ?? bus.longitude;
       if (typeof lat !== 'number' || typeof lng !== 'number' || isNaN(lat) || isNaN(lng)) return null;
