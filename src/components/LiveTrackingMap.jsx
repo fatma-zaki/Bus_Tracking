@@ -109,27 +109,31 @@ const LiveTrackingMap = ({ routeId = null, busId = null, userRole = "parent", bu
     });
   }
 
-  // Transform buses data for map component
-  let mapBuses = Array.isArray(buses) ? buses.map(bus => ({
-    id: bus._id || bus.id,
-    number: bus.BusNumber || bus.number,
-    route: bus.route_id?.name || bus.route_id || bus.route || "",
-    route_id: bus.route_id?._id || bus.route_id || bus.route || "", // أضف هذا السطر
-    driver: bus.driverId?.firstName ? `${bus.driverId.firstName} ${bus.driverId.lastName}` : bus.driver || "",
-    lat: bus.currentLocation?.lat ?? bus.currentLocation?.latitude ?? bus.lat,
-    lng: bus.currentLocation?.lng ?? bus.currentLocation?.long ?? bus.currentLocation?.longitude ?? bus.lng ?? bus.long ?? bus.longitude,
-    status: bus.status || "active",
-    passengers: bus.passengers || 0,
-    capacity: bus.capacity || 0,
-    speed: bus.speed || 0,
-    heading: bus.heading || 0,
-    nextStop: bus.nextStop || "",
-    eta: bus.eta || "",
-    isMoving: bus.isMoving || true,
-    lastUpdate: bus.lastUpdate || new Date().toISOString(),
-    batteryLevel: bus.batteryLevel || 100,
-    signalStrength: bus.signalStrength || 100,
-  })) : []
+  // Transform buses data for map component (handles both nested tracking format and flat bus format)
+  let mapBuses = Array.isArray(buses) ? buses.map(raw => {
+    const b = raw.bus || raw;
+    const loc = raw.location || raw.currentLocation || {};
+    return {
+      id: b._id || b.id,
+      number: b.BusNumber || b.number,
+      route: b.route_id?.name || b.route_id || b.route || "",
+      route_id: b.route_id?._id || b.route_id || b.route || "",
+      driver: b.driverId?.firstName ? `${b.driverId.firstName} ${b.driverId.lastName}` : b.driver || "",
+      lat: loc.lat ?? loc.latitude ?? b.lat,
+      lng: loc.lng ?? loc.long ?? loc.longitude ?? b.lng ?? b.long ?? b.longitude,
+      status: loc.status || b.status || "active",
+      passengers: b.passengers || 0,
+      capacity: b.capacity || 0,
+      speed: loc.speed || b.speed || 0,
+      heading: loc.heading || b.heading || 0,
+      nextStop: loc.next_station || b.nextStop || "",
+      eta: b.eta || "",
+      isMoving: (loc.speed || 0) > 0,
+      lastUpdate: loc.timestamp || b.lastUpdate || new Date().toISOString(),
+      batteryLevel: loc.battery_level || b.batteryLevel || 100,
+      signalStrength: loc.signal_strength || b.signalStrength || 100,
+    };
+  }) : []
 
   // ثم ضع شرط عدم وجود باصات هنا:
   if (!Array.isArray(mapBuses) || mapBuses.length === 0) {

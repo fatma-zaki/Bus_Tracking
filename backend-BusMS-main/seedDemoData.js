@@ -8,6 +8,7 @@ const Assignment = require('./models/Assignment');
 const Booking = require('./models/BookingModel');
 const BusLocation = require('./models/BusLocationModel');
 const Attendance = require('./models/attendance.model');
+const BusTracking = require('./models/trackingModel');
 
 dotenv.config();
 
@@ -281,7 +282,23 @@ const seedDemoData = async () => {
     }
     console.log('Bus locations ready');
 
-    // ─── 10. Create attendance records ───
+    // ─── 10. Create bus tracking records (GPS data for map) ───
+    const trackingData = [
+      { bus_id: buses[0]._id, latitude: 30.0500, longitude: 31.2300, speed: 35, heading: 90, status: 'active', current_station: 'Central Park', next_station: 'Library Square', battery_level: 92, signal_strength: 95 },
+      { bus_id: buses[1]._id, latitude: 30.0350, longitude: 31.2550, speed: 0, heading: 45, status: 'stopped', current_station: 'Rose Garden', next_station: 'Hospital Road', battery_level: 78, signal_strength: 88 },
+      { bus_id: buses[2]._id, latitude: 30.0620, longitude: 31.2180, speed: 42, heading: 180, status: 'active', current_station: 'Hilltop Market', next_station: 'River Bridge', battery_level: 85, signal_strength: 91 },
+    ];
+
+    for (const t of trackingData) {
+      await BusTracking.findOneAndUpdate(
+        { bus_id: t.bus_id },
+        t,
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    }
+    console.log('Bus tracking (GPS) ready');
+
+    // ─── 11. Create attendance records ───
     const attendanceData = [
       { personId: students[0]._id, personType: 'student', date: twoDaysAgo, status: 'present', boardingTime: '07:15', deboardingTime: '07:50', parentId: parent._id },
       { personId: students[1]._id, personType: 'student', date: twoDaysAgo, status: 'present', boardingTime: '07:20', deboardingTime: '07:50', parentId: parent._id },
@@ -316,6 +333,7 @@ const seedDemoData = async () => {
     console.log(`Bookings:     ${await Booking.countDocuments()}`);
     console.log(`Bus Locations: ${await BusLocation.countDocuments()}`);
     console.log(`Attendance:   ${await Attendance.countDocuments()}`);
+    console.log(`Bus Tracking: ${await BusTracking.countDocuments()}`);
     console.log('===================================\n');
 
     process.exit(0);
