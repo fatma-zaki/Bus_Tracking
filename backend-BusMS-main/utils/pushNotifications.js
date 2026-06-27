@@ -1,25 +1,31 @@
-// utils/pushNotifications.js
-
 const admin = require("firebase-admin");
 const path = require("path");
 const dotenv = require("dotenv");
 
 dotenv.config();
-// تحميل ملف إعدادات Firebase من .env
-console.log("TEST:", process.env.FIREBASE_CONFIG_PATH);
 
+let firebaseInitialized = false;
 
-const serviceAccount = require(path.resolve(process.env.FIREBASE_CONFIG_PATH));
-
-// تهيئة Firebase Admin مرة واحدة فقط
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
+try {
+  if (process.env.FIREBASE_CONFIG_PATH) {
+    const serviceAccount = require(path.resolve(process.env.FIREBASE_CONFIG_PATH));
+    if (!admin.apps.length) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    }
+    firebaseInitialized = true;
+  }
+} catch (error) {
+  console.warn("Firebase not configured — push notifications disabled:", error.message);
 }
 
-// إرسال الإشعار
 const sendPushNotification = async (token, title, message) => {
+  if (!firebaseInitialized) {
+    console.warn("Push notification skipped — Firebase not configured");
+    return;
+  }
+
   const payload = {
     notification: {
       title,
