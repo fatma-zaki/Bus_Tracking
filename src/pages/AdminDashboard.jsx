@@ -56,7 +56,7 @@ const AdminDashboard = () => {
     BusNumber: '',
     capacity: '',
     status: 'active',
-    assigned_driver_id: '',
+    driverId: '',
     route_id: ''
   })
 
@@ -1147,7 +1147,7 @@ const AdminDashboard = () => {
                   BusNumber: busFormData.BusNumber,
                   capacity: parseInt(busFormData.capacity),
                   status: busFormData.status,
-                  assigned_driver_id: busFormData.assigned_driver_id || null,
+                  driverId: busFormData.driverId || null,
                   route_id: busFormData.route_id || null,
                 };
                 console.log("Payload being sent:", payload);
@@ -1159,7 +1159,7 @@ const AdminDashboard = () => {
                     BusNumber: '',
                     capacity: '',
                     status: 'active',
-                    assigned_driver_id: '',
+                    driverId: '',
                     route_id: ''
                   });
                 }
@@ -1219,8 +1219,8 @@ const AdminDashboard = () => {
                     Assigned Driver
                   </label>
                   <select
-                    value={busFormData.assigned_driver_id}
-                    onChange={(e) => setBusFormData(prev => ({ ...prev, assigned_driver_id: e.target.value }))}
+                    value={busFormData.driverId}
+                    onChange={(e) => setBusFormData(prev => ({ ...prev, driverId: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">Select a driver (optional)</option>
@@ -1492,7 +1492,7 @@ const AdminDashboard = () => {
               BusNumber: data.BusNumber,
               capacity: data.capacity,
               status: data.status,
-              assigned_driver_id: data.assigned_driver_id || null,
+              driverId: data.driverId || null,
               route_id: data.route_id || null,
             };
             await dispatch(updateBus({ id: editingBus._id, busData: payload }));

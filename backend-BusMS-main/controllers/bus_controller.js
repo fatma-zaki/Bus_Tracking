@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 exports.createBus = async (req, res) => {
     try {
         console.log('  data', req.body);
-        const { BusNumber, capacity, status, assigned_driver_id, route_id } = req.body;
+        const { BusNumber, capacity, status, driverId, route_id } = req.body;
         
         // Check if bus already exists
         const existingBus = await Bus.findOne({ BusNumber });
@@ -21,20 +21,20 @@ exports.createBus = async (req, res) => {
             validatedRouteId = route_id;
         }
 
-        // Validate assigned_driver_id if provided
+        // Validate driverId if provided
         let validatedDriverId = null;
-        if (assigned_driver_id && assigned_driver_id !== 'null' && assigned_driver_id !== '') {
-            if (!mongoose.Types.ObjectId.isValid(assigned_driver_id)) {
-                return res.status(400).json({ message: 'Invalid assigned_driver_id format' });
+        if (driverId && driverId !== 'null' && driverId !== '') {
+            if (!mongoose.Types.ObjectId.isValid(driverId)) {
+                return res.status(400).json({ message: 'Invalid driverId format' });
             }
-            validatedDriverId = assigned_driver_id;
+            validatedDriverId = driverId;
         }
 
         const bus = new Bus({
             BusNumber,
             capacity,
             status,
-            assigned_driver_id: validatedDriverId,
+            driverId: validatedDriverId,
             route_id: validatedRouteId
         });
         
@@ -77,7 +77,7 @@ exports.getAllBuses = async (req, res) => {
     try {
         console.log('Fetching buses...');
         const buses = await Bus.find()
-            .populate('assigned_driver_id', 'firstName lastName')
+            .populate('driverId', 'firstName lastName')
             .populate('route_id', 'name start_point end_point');
         res.status(200).json(buses);
     } catch (error) {
@@ -89,7 +89,7 @@ exports.getBusById = async (req, res) => {
     try {
         const { id } = req.params;
         const buses = await Bus.findById(id)
-            .populate('assigned_driver_id', 'firstName lastName')
+            .populate('driverId', 'firstName lastName')
             .populate('route_id', 'name start_point end_point');
         if (!buses)
             return res.status(404).json({ message: 'Bus not found' });
@@ -114,13 +114,13 @@ exports.updateBus = async (req, res) => {
             updates.route_id = null;
         }
 
-        // Validate assigned_driver_id if provided in updates
-        if (updates.assigned_driver_id && updates.assigned_driver_id !== 'null' && updates.assigned_driver_id !== '') {
-            if (!mongoose.Types.ObjectId.isValid(updates.assigned_driver_id)) {
-                return res.status(400).json({ message: 'Invalid assigned_driver_id format' });
+        // Validate driverId if provided in updates
+        if (updates.driverId && updates.driverId !== 'null' && updates.driverId !== '') {
+            if (!mongoose.Types.ObjectId.isValid(updates.driverId)) {
+                return res.status(400).json({ message: 'Invalid driverId format' });
             }
-        } else if (updates.assigned_driver_id === 'null' || updates.assigned_driver_id === '') {
-            updates.assigned_driver_id = null;
+        } else if (updates.driverId === 'null' || updates.driverId === '') {
+            updates.driverId = null;
         }
 
         const updateBus = await Bus.findByIdAndUpdate(id, updates, { new: true });

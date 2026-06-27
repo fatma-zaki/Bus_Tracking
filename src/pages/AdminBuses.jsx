@@ -50,7 +50,7 @@ const AdminBuses = () => {
       required: true,
       options: ["active", "maintenance", "inactive"],
     },
-    assigned_driver_id: {
+    driverId: {
       type: "select",
       label: "Driver",
       required: false,
@@ -73,7 +73,7 @@ const AdminBuses = () => {
   // فلترة وبحث
   const filteredBuses = (buses || [])
     .filter((bus) =>
-      (bus.BusNumber + " " + (bus.assigned_driver_id || ""))
+      (bus.BusNumber + " " + (bus.driverId || ""))
         .toLowerCase()
         .includes(search.toLowerCase())
     )

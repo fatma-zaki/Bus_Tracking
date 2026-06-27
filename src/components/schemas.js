@@ -26,7 +26,7 @@ export const busSchema = {
     options: ["active", "Maintenance", "inactive"],
     default: "active",
   },
-  // Note: assigned_driver_id and route_id will be handled separately with dropdowns
+  // Note: driverId and route_id will be handled separately with dropdowns
   // since they require fetching data from the backend
 };
 

@@ -115,7 +115,7 @@ const LiveTrackingMap = ({ routeId = null, busId = null, userRole = "parent", bu
     number: bus.BusNumber || bus.number,
     route: bus.route_id?.name || bus.route_id || bus.route || "",
     route_id: bus.route_id?._id || bus.route_id || bus.route || "", // أضف هذا السطر
-    driver: bus.assigned_driver_id?.firstName ? `${bus.assigned_driver_id.firstName} ${bus.assigned_driver_id.lastName}` : bus.driver || "",
+    driver: bus.driverId?.firstName ? `${bus.driverId.firstName} ${bus.driverId.lastName}` : bus.driver || "",
     lat: bus.currentLocation?.lat ?? bus.currentLocation?.latitude ?? bus.lat,
     lng: bus.currentLocation?.lng ?? bus.currentLocation?.long ?? bus.currentLocation?.longitude ?? bus.lng ?? bus.long ?? bus.longitude,
     status: bus.status || "active",
